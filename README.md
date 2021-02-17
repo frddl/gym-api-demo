@@ -1,3 +1,84 @@
+<table>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Body</th>
+<th>Description</th>
+</tr>
+<tr>
+    <td>POST</td>
+    <td>/api/{clients|trainers}/login</td>
+    <td>{email, password}</td>
+    <td>Login endpoint for clients|trainers, returns JWT.</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/{clients|trainers}/me</td>
+    <td></td>
+    <td>Returns information about current client|trainer.</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/trainers/all</td>
+    <td></td>
+    <td>Returns list of trainers</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/trainers/{id}/sessions</td>
+    <td></td>
+    <td>Returns training sessions of a trainer</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/trainers/{id}/free</td>
+    <td></td>
+    <td>Returns only free training sessions of a trainer</td>
+</tr>
+<tr>
+    <td>POST</td>
+    <td>/api/clients/sessions</td>
+    <td>id (training id)</td>
+    <td>Books session for a client</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/clients/sessions</td>
+    <td></td>
+    <td>Returns the upcoming session for the active client</td>
+</tr>
+<tr>
+    <td>POST</td>
+    <td>/api/clients/sessions/{id}/cancel</td>
+    <td></td>
+    <td>Cancels the session for client</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/trainers/sessions</td>
+    <td></td>
+    <td>Returns the upcoming session for the active trainer</td>
+</tr>
+<tr>
+    <td>POST</td>
+    <td>/api/trainers/sessions</td>
+    <td>date, start_time, end_time</td>
+    <td>Creates an upcoming session for the active trainer</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/trainers/sessions/{id}</td>
+    <td></td>
+    <td>Returns information about the session with registered clients for the active trainer</td>
+</tr>
+<tr>
+    <td>POST</td>
+    <td>/api/trainers/sessions/{id}/cancel</td>
+    <td></td>
+    <td>Cancels the session for the active trainer</td>
+</tr>
+</table>
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
