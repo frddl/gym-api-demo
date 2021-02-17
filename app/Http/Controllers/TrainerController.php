@@ -197,7 +197,7 @@ class TrainerController extends Controller
 
     /**
      * As i messed up the way time is stored in db, here is a shameful method for working with time. :(
-     * 
+     *
      * @param $hh
      * @return int
      */
