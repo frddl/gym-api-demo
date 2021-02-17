@@ -29,7 +29,7 @@ class AuthController extends Controller
      * Get the token array structure.
      *
      * @param string $token
-     *
+     * @param string $user
      * @return JsonResponse
      */
     protected function respondWithToken(string $token, string $user): JsonResponse
@@ -49,6 +49,7 @@ class AuthController extends Controller
      */
     public function me(string $user): JsonResponse
     {
-        return response()->json(auth($user)->user());
+        $user = auth($user)->user();
+        return response()->json($user, $user ? 200 : 401);
     }
 }

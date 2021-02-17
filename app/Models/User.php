@@ -15,6 +15,8 @@ class User extends Authenticatable implements JWTSubject
         'name', 'email', 'password'
     ];
 
+    protected $hidden = ['password', 'created_at', 'updated_at', 'deleted_at'];
+
     protected $foreign_key = 'id';
     protected $session_model = \App\Models\Training\TrainingSession::class;
 
