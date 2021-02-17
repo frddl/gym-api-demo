@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Training\TrainingSession;
-use App\Models\Training\TrainingSessionInfo;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ClientSeeder::class);
         $this->call(TrainerSeeder::class);
-        $this->call(TrainingSession::class);
-        $this->call(TrainingSessionInfo::class);
+        $this->call(TrainingSessionsSeeder::class);
+        $this->call(TrainingSessionsInfoSeeder::class);
     }
 }
