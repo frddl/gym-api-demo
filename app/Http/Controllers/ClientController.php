@@ -43,8 +43,15 @@ class ClientController extends Controller
         return response()->json(['sessions' => $t], 200);
     }
 
-    public function cancelSession(int $sessionId): JsonResponse {
-        $user = auth('trainers')->user();
+    /**
+     * Method to cancel the session on client side
+     *
+     * @param int $sessionId
+     * @return JsonResponse
+     */
+    public function cancelSession(int $sessionId): JsonResponse
+    {
+        $user = auth('clients')->user();
         if (!$user) return response()->json([], 401);
 
         $session = $user->sessions()->where('training_session_id', $sessionId);
@@ -56,7 +63,17 @@ class ClientController extends Controller
         ], sizeof($session) ? 200 : 404);
     }
 
-    public function bookSession(Request $request): JsonResponse {
+    /**
+     * Method to book a session on client side
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bookSession(Request $request): JsonResponse
+    {
+        $user = auth('clients')->user();
+        if (!$user) return response()->json([], 401);
+        if (!$user->isAvailable()) return response()->json(['status' => 'error', 'description' => 'User is not available']);
 
         return response()->json([], 200);
     }

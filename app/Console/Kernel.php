@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Models\Training\TrainingSessionInfo;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,6 +27,13 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            TrainingSessionInfo::whereHas('session', function ($query) {
+                return $query->where('date', '<', date('Y-m-d'));
+            })->get()->each(function ($item, $key) {
+                $item->delete();
+            });
+        })->dailyAt('02:00');
     }
 
     /**

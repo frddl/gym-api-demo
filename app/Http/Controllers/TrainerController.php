@@ -108,7 +108,11 @@ class TrainerController extends Controller
         return response()->json($result, 200);
     }
 
-    public function mySessions(): JsonResponse {
+    /**
+     * @return JsonResponse
+     */
+    public function mySessions(): JsonResponse
+    {
         $user = auth('trainers')->user();
         if (!$user) return response()->json([], 401);
         $sessions = $user->sessions()->without('trainer')->get();
@@ -116,12 +120,17 @@ class TrainerController extends Controller
         return response()->json($sessions, 200);
     }
 
+    /**
+     * @param int $sessionId
+     * @return JsonResponse
+     */
     public function cancelSession(int $sessionId): JsonResponse
     {
         $user = auth('trainers')->user();
         if (!$user) return response()->json([], 401);
 
         $session = $user->sessions()->without('trainer')->where('id', $sessionId)->first();
+        // TODO: checking for start time
         $session->delete();
 
         return response()->json([
@@ -130,7 +139,13 @@ class TrainerController extends Controller
         ], sizeof($session) ? 200 : 404);
     }
 
-    public function createSession(Request $request)
+    /**
+     * Method for trainers to create sessions
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function createSession(Request $request): JsonResponse
     {
         $user = auth('trainers')->user();
         if (!$user) return response()->json([], 401);
@@ -147,9 +162,18 @@ class TrainerController extends Controller
             ], 403);
         }
 
+        $shift_start = config()->get('training-shift.start_time');
+        $shift_end = config()->get('training-shift.end_time');
+        if ($this->hhToMinutes($start) < $this->hhToMinutes($shift_start) || $this->hhToMinutes($start) > $this->hhToMinutes($shift_end) || $this->hhToMinutes($end) > $this->hhToMinutes($shift_end) || $this->hhToMinutes($end) < $this->hhToMinutes($shift_start)) {
+            return response()->json([
+                'status' => 'error',
+                'description' => 'The gym does not operate during given hours',
+            ], 403);
+        }
+
         // checking if there is a session with this information already
         $checkSession = TrainingSession::byDate($date)->get();
-        $filtered = $checkSession->filter(function($model) use ($start, $end){
+        $filtered = $checkSession->filter(function ($model) use ($start, $end) {
             $diff_before_start = ($this->hhToMinutes($model->start_time) > $this->hhToMinutes($start) && $this->hhToMinutes($model->start_time) > $this->hhToMinutes($end));
             $diff_after_end = ($this->hhToMinutes($model->end_time) < $this->hhToMinutes($end) && $this->hhToMinutes($model->end_time) < $this->hhToMinutes($start));
 
@@ -171,7 +195,14 @@ class TrainerController extends Controller
         return response()->json($session, 200);
     }
 
-    protected function hhToMinutes($hh): int {
+    /**
+     * As i messed up the way time is stored in db, here is a shameful method for working with time. :(
+     * 
+     * @param $hh
+     * @return int
+     */
+    protected function hhToMinutes($hh): int
+    {
         $parts = explode(":", $hh);
         return ($parts[0] * 60) + $parts[1];
     }
