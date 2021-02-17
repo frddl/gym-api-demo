@@ -74,6 +74,21 @@ class TrainerController extends Controller
     }
 
     /**
+     * Method to get information about the training session with the clients
+     *
+     * @param int $sessionId
+     * @return JsonResponse
+     */
+    public function session(int $sessionId): JsonResponse
+    {
+        $trainer = auth('trainers')->user();
+        if (!$trainer) return response()->json([], 401);
+        $session = $trainer->sessions->where('id', $sessionId)->first();
+        $session['clients'] = $session->clients;
+        return response()->json($session, 200);
+    }
+
+    /**
      * Method to get only free training session slots
      *
      * @param int $trainerId

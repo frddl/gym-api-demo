@@ -8,4 +8,8 @@ class Client extends User
 {
     protected $foreign_key = 'client_id';
     protected $session_model = \App\Models\Training\TrainingSessionInfo::class;
+
+    public function isAvailable(): bool {
+        return !$this->sessions()->count();
+    }
 }
