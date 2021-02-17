@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\DateTimeFormatValidator;
 use App\Models\Training\TrainingSession;
 use App\Models\Users\Trainer;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class TrainerController extends Controller
@@ -106,7 +108,16 @@ class TrainerController extends Controller
         return response()->json($result, 200);
     }
 
-    public function cancelSession(int $sessionId): JsonResponse {
+    public function mySessions(): JsonResponse {
+        $user = auth('trainers')->user();
+        if (!$user) return response()->json([], 401);
+        $sessions = $user->sessions()->without('trainer')->get();
+
+        return response()->json($sessions, 200);
+    }
+
+    public function cancelSession(int $sessionId): JsonResponse
+    {
         $user = auth('trainers')->user();
         if (!$user) return response()->json([], 401);
 
@@ -117,5 +128,51 @@ class TrainerController extends Controller
             'status' => sizeof($session) ? 'Deleted' : 'Not found',
             'count' => sizeof($session)
         ], sizeof($session) ? 200 : 404);
+    }
+
+    public function createSession(Request $request)
+    {
+        $user = auth('trainers')->user();
+        if (!$user) return response()->json([], 401);
+
+        $date = $request->input('date');
+        $start = $request->input('start_time');
+        $end = $request->input('end_time');
+
+        if (!DateTimeFormatValidator::dateIsValid($date) ||
+            !DateTimeFormatValidator::timeDurationIsValid($start, $end)) {
+            return response()->json([
+                'status' => 'error',
+                'description' => 'Time or date has an invalid format',
+            ], 403);
+        }
+
+        // checking if there is a session with this information already
+        $checkSession = TrainingSession::byDate($date)->get();
+        $filtered = $checkSession->filter(function($model) use ($start, $end){
+            $diff_before_start = ($this->hhToMinutes($model->start_time) > $this->hhToMinutes($start) && $this->hhToMinutes($model->start_time) > $this->hhToMinutes($end));
+            $diff_after_end = ($this->hhToMinutes($model->end_time) < $this->hhToMinutes($end) && $this->hhToMinutes($model->end_time) < $this->hhToMinutes($start));
+
+            return !($diff_after_end || $diff_before_start);
+        });
+
+        if ($filtered->count()) return response()->json([
+            'status' => 'error',
+            'description' => 'There is already a training session for given time period',
+        ], 403);
+
+        $session = TrainingSession::create([
+            'date' => $date,
+            'start_time' => $start,
+            'end_time' => $end,
+            'trainer_id' => $user->id,
+        ]);
+
+        return response()->json($session, 200);
+    }
+
+    protected function hhToMinutes($hh): int {
+        $parts = explode(":", $hh);
+        return ($parts[0] * 60) + $parts[1];
     }
 }

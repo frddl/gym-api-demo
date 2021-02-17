@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Training\TrainingSessionInfo;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
@@ -53,5 +54,10 @@ class ClientController extends Controller
             'status' => sizeof($session) ? 'Deleted' : 'Not found',
             'count' => sizeof($session)
         ], sizeof($session) ? 200 : 404);
+    }
+
+    public function bookSession(Request $request): JsonResponse {
+
+        return response()->json([], 200);
     }
 }
