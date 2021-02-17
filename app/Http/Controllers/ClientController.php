@@ -75,6 +75,11 @@ class ClientController extends Controller
         if (!$user) return response()->json([], 401);
         if (!$user->isAvailable()) return response()->json(['status' => 'error', 'description' => 'User is not available']);
 
-        return response()->json([], 200);
+        $t = TrainingSessionInfo::create([
+            'client_id' => $user->id,
+            'training_session_id' => $request->input('session_id'),
+        ]);
+
+        return response()->json($t, 200);
     }
 }

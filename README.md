@@ -8,7 +8,7 @@
 <tr>
     <td>POST</td>
     <td>/api/{clients|trainers}/login</td>
-    <td>{email, password}</td>
+    <td>email, password</td>
     <td>Login endpoint for clients|trainers, returns JWT.</td>
 </tr>
 <tr>
@@ -38,7 +38,7 @@
 <tr>
     <td>POST</td>
     <td>/api/clients/sessions</td>
-    <td>id (training id)</td>
+    <td>session_id (training id)</td>
     <td>Books session for a client</td>
 </tr>
 <tr>
