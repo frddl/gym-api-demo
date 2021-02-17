@@ -41,4 +41,17 @@ class ClientController extends Controller
 
         return response()->json(['sessions' => $t], 200);
     }
+
+    public function cancelSession(int $sessionId): JsonResponse {
+        $user = auth('trainers')->user();
+        if (!$user) return response()->json([], 401);
+
+        $session = $user->sessions()->where('training_session_id', $sessionId);
+        $session->delete();
+
+        return response()->json([
+            'status' => sizeof($session) ? 'Deleted' : 'Not found',
+            'count' => sizeof($session)
+        ], sizeof($session) ? 200 : 404);
+    }
 }

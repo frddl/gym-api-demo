@@ -23,11 +23,13 @@ Route::group(['prefix' => '{user}', 'as' => 'api.'], function ($router) {
 Route::group(['prefix' => 'trainers', 'as' => 'api.trainers.'], function ($router) {
     $router->get('/all', [TrainerController::class, 'all'])->name('all');
     $router->get('/session/{id}', [TrainerController::class, 'session'])->name('session');
+    $router->post('/session/{id}/cancel', [TrainerController::class, 'cancelSession'])->name('cancel');
     $router->get('/{id}/sessions', [TrainerController::class, 'sessions'])->name('sessions');
     $router->get('/{id}/free', [TrainerController::class, 'free'])->name('free');
 });
 
 Route::group(['prefix' => 'clients', 'as' => 'api.clients.'], function ($router) {
     $router->get('/sessions', [ClientController::class, 'sessions'])->name('sessions');
+    $router->post('/session/{id}/cancel', [ClientController::class, 'cancelSession'])->name('cancel');
 });
 

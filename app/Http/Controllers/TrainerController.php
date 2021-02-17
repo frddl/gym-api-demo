@@ -83,7 +83,7 @@ class TrainerController extends Controller
     {
         $trainer = auth('trainers')->user();
         if (!$trainer) return response()->json([], 401);
-        $session = $trainer->sessions->where('id', $sessionId)->first();
+        $session = $trainer->sessions()->without('trainer')->where('id', $sessionId)->first();
         $session['clients'] = $session->clients;
         return response()->json($session, 200);
     }
@@ -104,5 +104,18 @@ class TrainerController extends Controller
         }
 
         return response()->json($result, 200);
+    }
+
+    public function cancelSession(int $sessionId): JsonResponse {
+        $user = auth('trainers')->user();
+        if (!$user) return response()->json([], 401);
+
+        $session = $user->sessions()->without('trainer')->where('id', $sessionId)->first();
+        $session->delete();
+
+        return response()->json([
+            'status' => sizeof($session) ? 'Deleted' : 'Not found',
+            'count' => sizeof($session)
+        ], sizeof($session) ? 200 : 404);
     }
 }
