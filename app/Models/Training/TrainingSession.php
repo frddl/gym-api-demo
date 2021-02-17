@@ -17,7 +17,7 @@ class TrainingSession extends Model
         'date', 'start_time', 'end_time', 'trainer_id'
     ];
 
-    protected $hidden = ['created_at', 'updated_at', 'deleted_at', 'date', 'trainer_id'];
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at', 'trainer_id'];
     protected $appends = ['is_free'];
     protected $with = ['trainer'];
 
@@ -37,7 +37,8 @@ class TrainingSession extends Model
         return $query->where('date', $date);
     }
 
-    public function getIsFreeAttribute() {
+    public function getIsFreeAttribute(): bool
+    {
         return !$this->sessionInfo()->count();
     }
 }

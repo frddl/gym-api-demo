@@ -81,7 +81,7 @@ class TrainerController extends Controller
      */
     public function free(int $trainerId): JsonResponse
     {
-        $sessions = TrainingSession::byTrainer($trainerId)->get();
+        $sessions = TrainingSession::byTrainer($trainerId)->without('trainer')->get();
         $result = [];
 
         foreach ($sessions as $s) {
